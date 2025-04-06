@@ -1,4 +1,18 @@
--- BEATS 65%
+-- method 1: BEATS 72.78%
+
+SELECT
+    user_id, trial_avg_duration, paid_avg_duration
+FROM
+    (SELECT 
+        user_id,
+        ROUND(SUM(IF(activity_type = 'free_trial', activity_duration, 0)) / SUM(IF(activity_type = 'free_trial', 1, 0)), 2) AS trial_avg_duration,
+        ROUND(SUM(IF(activity_type = 'paid', activity_duration, 0)) / SUM(IF(activity_type = 'paid', 1, 0)), 2) AS paid_avg_duration
+    FROM UserActivity
+    GROUP BY user_id) AS tbl1
+WHERE paid_avg_duration IS NOT NULL AND trial_avg_duration IS NOT NULL 
+
+
+-- method 2: BEATS 65%
 
 WITH paid_users AS (
     SELECT
